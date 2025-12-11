@@ -8,6 +8,8 @@ The idea of this project was to create a web app where a user could query any ML
 
 Source of data: https://www.retrosheet.org/downloads/csvcontents.html
 
+All of the data is from retrosheet. There are 6 CSV files that were used. The plays.csv is 9 GB and the most significant data to this project. The idea was to have 
+
 I ingested these raw files in HDFS:
 
 [hadoop@ip-172-31-81-29 ~]$ hdfs dfs -ls /nvega_data/
@@ -44,12 +46,13 @@ nvega_game_pitching_player_stats
 nvega_game_summary
 nvega_gameinfo
 nvega_pitching
-
 nvega_play_by_play_for_game
 nvega_plays
 nvega_teamstats
 Time taken: 0.217 seconds, Fetched: 11 row(s)
 hive> 
+
+The HIVE tables above are the following that were using to create hbase tables. The 
 
 HBase Tables:
 "nvega_hb_game_batting_stats", "nvega_hb_game_pitching_stats", "nvega_hb_game_summary", "nvega_hb_play_by_play_new", "nvega_hb_play_by_play", "nvega_hb_play_by_play_v2", "nvega_latest_baseball_play"
