@@ -93,11 +93,11 @@ hbase shell
 
 scan 'nvega_latest_baseball_play', {LIMIT => 5}
 
-ssh ec2-user@ec2-52-20-203-80.compute-1.amazonaws.com
-
 ## Load App
 
 cd ~/nvega_baseball_app
+
+ssh ec2-user@ec2-52-20-203-80.compute-1.amazonaws.com
 
 node app.js 3092 http://ec2-54-89-237-222.compute-1.amazonaws.com:8070/
 
