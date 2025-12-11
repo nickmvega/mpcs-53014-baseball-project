@@ -2,7 +2,7 @@
 
 # Baseball Project
 
-The idea of this project was to create a web app where a user could query any MLB baseball game using a date, and the result would be the final score summary and the play by play information about the game. 
+The idea of this project was to create a web app where any user could query any MLB baseball game with a date, and the result would be the final score summary and the play by play information about the game. 
 
 The system also includes a speed layer designed to simulate live incoming baseball plays for 2025, demonstrating how the application would behave during an actual game with real-time updates.
 
@@ -22,19 +22,23 @@ Retrosheet CSVs
  
  ↓
 
-Thrift Serialization → Hive (Batch Layer)
+Thrift Serialization 
+
+ ↓
+
+Hive: Batch Layer
 
  ↓
                                  
-HBase (Serving Layer)
+HBase: Serving Layer
   
   ↑
 
-Kafka → Spark Streaming (Speed Layer)
+Kafka → Spark Streaming: Speed Layer
 
   ↑
 
-baseball_stream.csv (Held out data for the 2025 season)
+baseball_stream.csv: Held out data for the 2025 season
 
 **Batch Layer (Hive + HBase)**
 
@@ -48,8 +52,6 @@ Provides quick lookups of game summaries and play-by-play events for each game o
 
 Simulate “live” 2025 play by play for each game by streaming them into Kafka, processing with Spark Streaming, and writing the latest play into the `nvega_latest_baseball_play` HBase table.
 
-
-
 # Challenges
 
 A major challenge throughout the project was cluster resource contention. I waited large amount of times for slow job executions, which significantly slowed development and debugging.
@@ -60,7 +62,7 @@ If I were to redo this project, I would run heavy Hive and Spark jobs during low
 
 Source of data: https://www.retrosheet.org/downloads/csvcontents.html
 
-All of the data is from retrosheet. There are 6 CSV files that were used. The plays.csv is 9 GB and the most significant data to this project. The idea was to have 
+There are 6 CSV files that were used. The `plays.csv` file is 9 GB and is the main dataset for generating the play-by-play table. The goal was to convert these raw CSVs into Thrift-serialized Hive tables for later processing into HBase views (batch layer.
 
 I ingested these raw files in HDFS:
 
@@ -145,7 +147,24 @@ create_tables_from_thrift.hq
 
 # Code
 
-All the code relating to thrift, kafka, speed layer, scripts for creating hive and updating hbase tables, 
+All code for the Thrift serializers, Kafka producer, Spark Streaming speed layer, Hive table creation scripts, and Hbase writing into scripts are all included in this repository.
+
+app.js  -> Web application server
+public/ -> Static assets for the web UI
+game.mustache -> Template for single-game view
+games.mustache -> Template for list of games
+plays.mustache -> Template for play-by-play table
+
+create_thrift_tables.hql  -> Creates Hive tables using Thrift serialization
+create_baseball_tables.hql -> Creates Hive ORC tables
+create_baseball_views.hql -> Hive table views used for queries
+baseball_write_to_hbase.hql -> Writes Hive data into HBase (batch layer)
+batch_layer.hql  -> Batch-layer processing
+
+Relevant jars are included 
+Relevant Kafka and Scala code is also inculded. 
+
+The recording is also included under RECORDING_nvega.mp4
 
 # Run Web App
 Commands to run my web app and speed layer. 
