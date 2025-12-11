@@ -16,15 +16,29 @@ The web app allows a user to enter a specific date of an MLB baseball game or ga
 
 The video can be found within this github repo, labeled as RECORDING_nvega.mp4. The video shows the webapp being used. The video shows the web application being used. While the speed layer was not fully functional , the video explains its intended function, how the Kafka/Spark jobs run, and how they update HBase in real time.
 
-# Diagram
+# Architecture
 
-Retrosheet CSVs → Thrift Serialization → Hive (Batch Layer)
-                                          ↓
-                                      HBase (Serving Layer)
-                                          ↑
-                        Kafka → Spark Streaming (Speed Layer)
-                                          ↑
-                               baseball_stream.csv
+Retrosheet CSVs → 
+Thrift Serialization → Hive (Batch Layer)
+                                 ↓
+                      HBase (Serving Layer)
+                                 ↑
+                Kafka → Spark Streaming (Speed Layer)
+                                 ↑
+                        baseball_stream.csv (Held out data for the 2025 season)
+
+**Batch Layer (Hive + HBase)**
+
+In the batch layer, historical play-by-play data from the 2020–2024 seasons was stored. The data went form Retrosheet CSV to Thrift to Hive to HBase batch tables. The original CSV file was 9 GBs large.
+
+**Serving Layer (HBase)**  
+
+Provides quick lookups of game summaries and play-by-play events for each game on the web app.
+
+**Speed Layer (Kafka + Spark Streaming + HBase)**  
+
+Simulate “live” 2025 play by play for each game by streaming them into Kafka, processing with Spark Streaming, and writing the latest play into the `nvega_latest_baseball_play` HBase table.
+
 
 
 # Challenges
