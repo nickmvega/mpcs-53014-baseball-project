@@ -63,6 +63,35 @@ The HIVE tables above are the following that were using to create hbase tables. 
 HBase Tables:
 "nvega_hb_game_batting_stats", "nvega_hb_game_pitching_stats", "nvega_hb_game_summary", "nvega_hb_play_by_play_new", "nvega_hb_play_by_play", "nvega_hb_play_by_play_v2", "nvega_latest_baseball_play"
 
+# Jars
+
+The jars used for this project can be found in the hadoop cluster. 
+
+[hadoop@ip-172-31-81-29 jars]$ ls
+hdfs-ingest-baseball-archetype-1.0-SNAPSHOT.jar  
+uber-hdfs-ingest-baseball-archetype-1.0-SNAPSHOT.jar
+kafka-baseball-archetype-1.0-SNAPSHOT.jar        
+uber-kafka-baseball-archetype-1.0-SNAPSHOT.jar                
+uber-speed-layer-baseball-archetype-1.0-SNAPSHOT.jar
+speed-layer-baseball-archetype-1.0-SNAPSHOT.jar
+
+[hadoop@ip-172-31-81-29 jars]$ pwd
+/home/hadoop/nvega/jars
+
+I included all jars relevant to thrift serialization, kafka, and the speed layer. Additioanlly, I've uploaded those jars to this github repo. 
+
+# Scripts
+
+The scripts that I used for this project to create tables, views, and writing to hbase are all on the hadoop cluster as well as in this github repo. 
+
+[hadoop@ip-172-31-81-29 scripts]$ ls
+baseball_write_to_hbase.hql  
+create_baseball_tables.hql
+batch_layer.hql              
+create_tables_from_thrift.hq
+
+[hadoop@ip-172-31-81-29 scripts]$ pwd
+/home/hadoop/nvega/scripts
 
 # Run Web App
 Commands to run my web app and speed layer. 
