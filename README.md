@@ -14,7 +14,7 @@ The web app allows a user to enter a specific date of an MLB baseball game or ga
 
 # Video
 
-The video can be found within this github repo, labeled as RECORDING_nvega.mp4. The video shows the webapp being used. The video shows the web application being used. While the speed layer was not fully functional , the video explains its intended function, how the Kafka/Spark jobs run, and how they update HBase in real time.
+The video can be found within this github repo, labeled as RECORDING_vega.mp4. The video shows the webapp being used. The video shows the web application being used. While the speed layer was not fully functional , the video explains its intended function, how the Kafka/Spark jobs run, and how they update HBase in real time.
 
 # Architecture
 
@@ -164,7 +164,7 @@ batch_layer.hql  -> Batch-layer processing
 Relevant jars are included 
 Relevant Kafka and Scala code is also inculded. 
 
-The recording is also included under RECORDING_nvega.mp4
+The recording is also included under RECORDING_vega.mp4
 
 # Run Web App
 Commands to run my web app and speed layer. 
