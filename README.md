@@ -4,6 +4,12 @@
 
 The idea of this project was to create a web app where a user could query any MLB baseball game using a date, and the result would be the final score summary and the play by play information about the game. The real time data would come into play during live games, where live data updating the play by play table in real time. 
 
+This project follows an Lambda Architecture with a batch layer, serving layer, and speed layer. The batch layer contains play by play data for each from 2020 to 2024. The speed layer simulates data coming in from 2025. 
+
+# Challenges
+
+One of the challenges that I faced with this project were the long wait time for cluster resources on various queries. I felt that a lot of my progress was hindered throug this and if I was able to give my past self any advice, it would be to try and run jobs when the cluster is less contested (times like 2 AM, etc). 
+
 # Data Ingestion 
 
 Source of data: https://www.retrosheet.org/downloads/csvcontents.html
