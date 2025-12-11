@@ -10,9 +10,22 @@ This project follows an Lambda Architecture with a batch layer, serving layer, a
 
 The batch layer contains play by play data for each game from 2020 to 2024. The speed layer simulates data coming in from the 2025 season, and the serving layer uses HBase tables to support fast queries on a large play by play dataset. 
 
+The web app allows a user to enter a specific date of an MLB baseball game or games. Then, the web app will show a list of all games that occured on that specific date. A simple game summary of each game will be shown. If you click on a specific game, then a full play by play summary of the game will be shown, meaning that every inning, out, and batter and pitcher match up will be shown. 
+
 # Video
 
 The video can be found within this github repo, labeled as RECORDING_nvega.mp4. The video shows the webapp being used. The video shows the web application being used. While the speed layer was not fully functional , the video explains its intended function, how the Kafka/Spark jobs run, and how they update HBase in real time.
+
+# Diagram
+
+Retrosheet CSVs → Thrift Serialization → Hive (Batch Layer)
+                                          ↓
+                                      HBase (Serving Layer)
+                                          ↑
+                        Kafka → Spark Streaming (Speed Layer)
+                                          ↑
+                               baseball_stream.csv
+
 
 # Challenges
 
@@ -77,9 +90,9 @@ nvega_hb_game_summary
 nvega_hb_play_by_play_new
 nvega_hb_play_by_play
 nvega_hb_play_by_play_v2
-nvega_latest_baseball_play   (also used by speed layer)
+nvega_latest_baseball_play  
 
-nvega_hb_play_by_play_v2 is the final batch layer tbale in hbase, as I had many issues with the regional bug as mentioned on end. These HBase tables were used for the serving layer for the web application.
+nvega_hb_play_by_play_v2 is the final batch layer table in hbase, as I had many issues with the regional bug as mentioned on end. These HBase tables were used for the serving layer for the web application.
 
 # Jars
 
