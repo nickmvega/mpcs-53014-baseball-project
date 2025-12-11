@@ -1,7 +1,29 @@
-The app has a batch layer, speed layer and serving layer. 
+# MPCS 53013
+# Nicholas Vega
 
+# Baseball Project
 
+The idea of this project was to create a web app where a user could query any MLB baseball game using a date, and the result would be the final score summary and the play by play information about the game. The real time data would come into play during live games, where live data updating the play by play table in real time. 
 
+# Data Ingestion 
+
+Source of data: https://www.retrosheet.org/downloads/csvcontents.html
+
+I ingested these raw files in HDFS:
+
+[hadoop@ip-172-31-81-29 ~]$ hdfs dfs -ls /nvega_data/
+Found 9 items
+drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 00:21 /nvega_data/allplayers
+drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-10 22:09 /nvega_data/baseball_stream
+drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 00:21 /nvega_data/batting
+drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 00:21 /nvega_data/gameinfo
+drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-10 22:42 /nvega_data/kafka_data
+drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 00:21 /nvega_data/pitching
+drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 00:21 /nvega_data/plays
+drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 00:21 /nvega_data/teamstats
+drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 21:13 /nvega_data/thrift
+
+The /nvega_data/allplayers, /nvega_data/batting, /nvega_data/game_info, /nvega_data/pitching, /nvega_data/plays, /nvega_data/teamstats is where all the CSV files live. The /nvega_data/thrift contains the thrift serializations of each of the CSV files. 
 
 
 
