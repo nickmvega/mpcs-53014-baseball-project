@@ -12,6 +12,7 @@ Source of data: https://www.retrosheet.org/downloads/csvcontents.html
 I ingested these raw files in HDFS:
 
 [hadoop@ip-172-31-81-29 ~]$ hdfs dfs -ls /nvega_data/
+
 Found 9 items
 drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 00:21 /nvega_data/allplayers
 drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-10 22:09 /nvega_data/baseball_stream
@@ -25,7 +26,32 @@ drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 21:13 /nvega_data/thr
 
 The /nvega_data/allplayers, /nvega_data/batting, /nvega_data/game_info, /nvega_data/pitching, /nvega_data/plays, /nvega_data/teamstats is where all the CSV files live. The /nvega_data/thrift contains the thrift serializations of each of the CSV files. 
 
+[hadoop@ip-172-31-81-29 ~]$ hdfs dfs -ls /nvega_data/thrift/
 
+Found 6 items
+drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 21:21 /nvega_data/thrift/allplayers
+drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 21:20 /nvega_data/thrift/batting
+drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 21:19 /nvega_data/thrift/gameinfo
+drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 21:20 /nvega_data/thrift/pitching
+drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 21:17 /nvega_data/thrift/plays
+drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 21:21 /nvega_data/thrift/teamstats
+
+hive> SHOW TABLES LIKE 'nvega_*';
+
+nvega_allplayers
+nvega_baseball_stream
+nvega_batting
+nvega_game_batting_player_stats
+nvega_game_pitching_player_stats
+nvega_game_summary
+nvega_gameinfo
+nvega_pitching
+
+nvega_play_by_play_for_game
+nvega_plays
+nvega_teamstats
+Time taken: 0.217 seconds, Fetched: 11 row(s)
+hive> 
 
 Commands to run my web app and speed layer. 
 
