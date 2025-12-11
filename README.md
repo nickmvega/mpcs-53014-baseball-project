@@ -35,7 +35,7 @@ drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 00:21 /nvega_data/pla
 drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 00:21 /nvega_data/teamstats
 drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 21:13 /nvega_data/thrift
 
-The /nvega_data/allplayers, /nvega_data/batting, /nvega_data/game_info, /nvega_data/pitching, /nvega_data/plays, /nvega_data/teamstats is where all the CSV files live. The /nvega_data/thrift contains the thrift serializations of each of the CSV files. 
+The /nvega_data/allplayers, /nvega_data/batting, /nvega_data/game_info, /nvega_data/pitching, /nvega_data/plays, /nvega_data/teamstats is where all the CSV files live. The /nvega_data/thrift contains the thrift serializations of each of the CSV files. I used the script create_thrift_tables.hql which can be found in this github repo to create these thrift tables. 
 
 [hadoop@ip-172-31-81-29 ~]$ hdfs dfs -ls /nvega_data/thrift/
 
@@ -46,6 +46,8 @@ drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 21:19 /nvega_data/thr
 drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 21:20 /nvega_data/thrift/pitching
 drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 21:17 /nvega_data/thrift/plays
 drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 21:21 /nvega_data/thrift/teamstats
+
+Once all the data have been serialized using Thrift into /nvega_data/thrift/*, I created Hive tables using create_tables_from_thrift.hql, which can be found in this repo. I also created a custom table for joining plays, player data, and game information.
 
 hive> SHOW TABLES LIKE 'nvega_*';
 nvega_allplayers
@@ -62,7 +64,9 @@ nvega_teamstats
 Time taken: 0.217 seconds, Fetched: 11 row(s)
 hive> 
 
-The HIVE tables above are the following that were using to create hbase tables. The 
+## Batch Layer
+
+The HIVE tables above are the following that were using to create hbase tables. The scripts baseball_write_to_hbase.hql and batch_layer.hql created these tables and filled them with the relevant data for our batch layer. I used the tables that I had created previously from HIVE tables in the previous section to create these tables. 
 
 HBase Tables:
 "nvega_hb_game_batting_stats", "nvega_hb_game_pitching_stats", "nvega_hb_game_summary", "nvega_hb_play_by_play_new", "nvega_hb_play_by_play", "nvega_hb_play_by_play_v2", "nvega_latest_baseball_play"
