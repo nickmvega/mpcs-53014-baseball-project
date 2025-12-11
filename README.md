@@ -2,17 +2,23 @@
 
 # Baseball Project
 
-The idea of this project was to create a web app where a user could query any MLB baseball game using a date, and the result would be the final score summary and the play by play information about the game. The real time data would come into play during live games, where live data updating the play by play table in real time. 
+The idea of this project was to create a web app where a user could query any MLB baseball game using a date, and the result would be the final score summary and the play by play information about the game. 
 
-This project follows an Lambda Architecture with a batch layer, serving layer, and speed layer. The batch layer contains play by play data for each from 2020 to 2024. The speed layer simulates data coming in from 2025. 
+The system also includes a speed layer designed to simulate live incoming baseball plays for 2025, demonstrating how the application would behave during an actual game with real-time updates.
+
+This project follows an Lambda Architecture with a batch layer, serving layer, and speed layer. 
+
+The batch layer contains play by play data for each game from 2020 to 2024. The speed layer simulates data coming in from the 2025 season, and the serving layer uses HBase tables to support fast queries on a large play by play dataset. 
 
 # Video
 
-The video can be found within this github repo, labeled as RECORDING_nvega.mp4. The video shows the webapp being used. While I wasn't able to get a fully functionaly speed layer, I explained in the video what the purpose of the speed layer in this project would be and the what the hadoop consoles were showing, when I ran the speed layer.
+The video can be found within this github repo, labeled as RECORDING_nvega.mp4. The video shows the webapp being used. The video shows the web application being used. While the speed layer was not fully functional , the video explains its intended function, how the Kafka/Spark jobs run, and how they update HBase in real time.
 
 # Challenges
 
-One of the challenges that I faced with this project were the long wait time for cluster resources on various queries. I felt that a lot of my progress was hindered throug this and if I was able to give my past self any advice, it would be to try and run jobs when the cluster is less contested (times like 2 AM, etc). 
+A major challenge throughout the project was cluster resource contention. I waited large amount of times for slow job executions, which significantly slowed development and debugging.
+
+If I were to redo this project, I would run heavy Hive and Spark jobs during low-traffic hours (e.g., late nights) to avoid this.
 
 # Data Ingestion 
 
@@ -22,34 +28,33 @@ All of the data is from retrosheet. There are 6 CSV files that were used. The pl
 
 I ingested these raw files in HDFS:
 
-[hadoop@ip-172-31-81-29 ~]$ hdfs dfs -ls /nvega_data/
+hdfs dfs -ls /nvega_data/
 
-Found 9 items
-drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 00:21 /nvega_data/allplayers
-drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-10 22:09 /nvega_data/baseball_stream
-drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 00:21 /nvega_data/batting
-drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 00:21 /nvega_data/gameinfo
-drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-10 22:42 /nvega_data/kafka_data
-drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 00:21 /nvega_data/pitching
-drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 00:21 /nvega_data/plays
-drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 00:21 /nvega_data/teamstats
-drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 21:13 /nvega_data/thrift
+/nvega_data/allplayers
+/nvega_data/baseball_stream
+/nvega_data/batting
+/nvega_data/gameinfo
+/nvega_data/kafka_data
+/nvega_data/pitching
+/nvega_data/plays
+/nvega_data/teamstats
+/nvega_data/thrift
 
 The /nvega_data/allplayers, /nvega_data/batting, /nvega_data/game_info, /nvega_data/pitching, /nvega_data/plays, /nvega_data/teamstats is where all the CSV files live. The /nvega_data/thrift contains the thrift serializations of each of the CSV files. I used the script create_thrift_tables.hql which can be found in this github repo to create these thrift tables. 
 
-[hadoop@ip-172-31-81-29 ~]$ hdfs dfs -ls /nvega_data/thrift/
+hdfs dfs -ls /nvega_data/thrift/
 
-Found 6 items
-drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 21:21 /nvega_data/thrift/allplayers
-drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 21:20 /nvega_data/thrift/batting
-drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 21:19 /nvega_data/thrift/gameinfo
-drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 21:20 /nvega_data/thrift/pitching
-drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 21:17 /nvega_data/thrift/plays
-drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 21:21 /nvega_data/thrift/teamstats
+/thrift/allplayers
+/thrift/batting
+/thrift/gameinfo
+/thrift/pitching
+/thrift/plays
+/thrift/teamstats
 
 Once all the data have been serialized using Thrift into /nvega_data/thrift/*, I created Hive tables using create_tables_from_thrift.hql, which can be found in this repo. I also created a custom table for joining plays, player data, and game information.
 
-hive> SHOW TABLES LIKE 'nvega_*';
+The HIVE tables created were the following:
+
 nvega_allplayers
 nvega_baseball_stream
 nvega_batting
@@ -61,21 +66,27 @@ nvega_pitching
 nvega_play_by_play_for_game
 nvega_plays
 nvega_teamstats
-Time taken: 0.217 seconds, Fetched: 11 row(s)
-hive> 
 
 ## Batch Layer
 
-The HIVE tables above are the following that were using to create hbase tables. The scripts baseball_write_to_hbase.hql and batch_layer.hql created these tables and filled them with the relevant data for our batch layer. I used the tables that I had created previously from HIVE tables in the previous section to create these tables. 
+The HIVE tables above are the following that were using to create hbase tables. The scripts baseball_write_to_hbase.hql and batch_layer.hql created these tables and filled them with the relevant data for our batch layer. These scripts write historical data (2020–2024) into the following HBase tables:
 
-HBase Tables:
-"nvega_hb_game_batting_stats", "nvega_hb_game_pitching_stats", "nvega_hb_game_summary", "nvega_hb_play_by_play_new", "nvega_hb_play_by_play", "nvega_hb_play_by_play_v2", "nvega_latest_baseball_play"
+nvega_hb_game_batting_stats
+nvega_hb_game_pitching_stats
+nvega_hb_game_summary
+nvega_hb_play_by_play_new
+nvega_hb_play_by_play
+nvega_hb_play_by_play_v2
+nvega_latest_baseball_play   (also used by speed layer)
+
+nvega_hb_play_by_play_v2 is the final batch layer tbale in hbase, as I had many issues with the regional bug as mentioned on end. These HBase tables were used for the serving layer for the web application.
 
 # Jars
 
 The jars used for this project can be found in the hadoop cluster. 
 
-[hadoop@ip-172-31-81-29 jars]$ ls
+/home/hadoop/nvega/jars
+
 hdfs-ingest-baseball-archetype-1.0-SNAPSHOT.jar  
 uber-hdfs-ingest-baseball-archetype-1.0-SNAPSHOT.jar
 kafka-baseball-archetype-1.0-SNAPSHOT.jar        
@@ -83,30 +94,25 @@ uber-kafka-baseball-archetype-1.0-SNAPSHOT.jar
 uber-speed-layer-baseball-archetype-1.0-SNAPSHOT.jar
 speed-layer-baseball-archetype-1.0-SNAPSHOT.jar
 
-[hadoop@ip-172-31-81-29 jars]$ pwd
-/home/hadoop/nvega/jars
-
 I included all jars relevant to thrift serialization, kafka, and the speed layer. Additioanlly, I've uploaded those jars to this github repo. 
 
 # Scripts
 
 The scripts that I used for this project to create tables, views, and writing to hbase are all on the hadoop cluster as well as in this github repo. 
 
-[hadoop@ip-172-31-81-29 scripts]$ ls
+/home/hadoop/nvega/scripts
+
 baseball_write_to_hbase.hql  
 create_baseball_tables.hql
 batch_layer.hql              
 create_tables_from_thrift.hq
-
-[hadoop@ip-172-31-81-29 scripts]$ pwd
-/home/hadoop/nvega/scripts
 
 # Run Web App
 Commands to run my web app and speed layer. 
 
 ## Set up Kafka & Speed Layer
 
-ssh hadoop@ec2-34-230-47-10.compute-1.amazonaws.com
+ssh hadoop@ec2-54-89-237-222.compute-1.amazonaws.com
 
 cd ~/nvega/jars
 
@@ -123,7 +129,6 @@ nohup spark-submit \
  --class StreamBaseball \
  uber-speed-layer-baseball-archetype-1.0-SNAPSHOT.jar \
  boot-public-byg.mpcs53014kafka.2siu49.c2.kafka.us-east-1.amazonaws.com:9196 &
-
 
 cd ~/kafka_2.12-3.9.1/bin
 
