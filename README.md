@@ -37,7 +37,6 @@ drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 21:17 /nvega_data/thr
 drwxr-xr-x   - hadoop hdfsadmingroup          0 2025-12-08 21:21 /nvega_data/thrift/teamstats
 
 hive> SHOW TABLES LIKE 'nvega_*';
-
 nvega_allplayers
 nvega_baseball_stream
 nvega_batting
@@ -53,10 +52,14 @@ nvega_teamstats
 Time taken: 0.217 seconds, Fetched: 11 row(s)
 hive> 
 
+HBase Tables:
+"nvega_hb_game_batting_stats", "nvega_hb_game_pitching_stats", "nvega_hb_game_summary", "nvega_hb_play_by_play_new", "nvega_hb_play_by_play", "nvega_hb_play_by_play_v2", "nvega_latest_baseball_play"
+
+
+#Run Web App
 Commands to run my web app and speed layer. 
 
-
-//Set up Kafka
+##Set up Kafka & Speed Layer
 
 ssh hadoop@ec2-34-230-47-10.compute-1.amazonaws.com
 
@@ -85,7 +88,7 @@ cd ~/kafka_2.12-3.9.1/bin
   --from-beginning \
   --consumer.config ~/kafka.client.properties
 
-//Check that Kafka is streaming 
+##Check that Kafka is streaming 
 
 hbase shell
 
@@ -93,7 +96,7 @@ scan 'nvega_latest_baseball_play', {LIMIT => 5}
 
 ssh ec2-user@ec2-52-20-203-80.compute-1.amazonaws.com
 
-//Load App
+##Load App
 
 cd ~/nvega_baseball_app
 
@@ -101,13 +104,13 @@ node app.js 3092 http://ec2-54-89-237-222.compute-1.amazonaws.com:8070/
 
 http://ec2-52-20-203-80.compute-1.amazonaws.com:3092
 
-//Kill everything after
+##Kill jobs after
 
 pkill -f StreamBaseball
 
 pkill -f StreamIntoKafkaBaseball
 
-//Recreate a repeat to simualate streaming
+##Recreate hbase tables and repeat to simualate streaming
 
 hbase shell
 disable 'nvega_latest_baseball_play'
