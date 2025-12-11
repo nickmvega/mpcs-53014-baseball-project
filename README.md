@@ -18,14 +18,23 @@ The video can be found within this github repo, labeled as RECORDING_nvega.mp4. 
 
 # Architecture
 
-Retrosheet CSVs → 
+Retrosheet CSVs 
+ 
+ ↓
+
 Thrift Serialization → Hive (Batch Layer)
-                                 ↓
-                      HBase (Serving Layer)
-                                 ↑
-                Kafka → Spark Streaming (Speed Layer)
-                                 ↑
-                        baseball_stream.csv (Held out data for the 2025 season)
+
+ ↓
+                                 
+HBase (Serving Layer)
+  
+  ↑
+
+Kafka → Spark Streaming (Speed Layer)
+
+  ↑
+
+baseball_stream.csv (Held out data for the 2025 season)
 
 **Batch Layer (Hive + HBase)**
 
