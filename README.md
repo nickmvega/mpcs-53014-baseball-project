@@ -6,6 +6,10 @@ The idea of this project was to create a web app where a user could query any ML
 
 This project follows an Lambda Architecture with a batch layer, serving layer, and speed layer. The batch layer contains play by play data for each from 2020 to 2024. The speed layer simulates data coming in from 2025. 
 
+# Video
+
+The video can be found within this github repo, labeled as RECORDING_nvega.mp4. The video shows the webapp being used. While I wasn't able to get a fully functionaly speed layer, I explained in the video what the purpose of the speed layer in this project would be and the what the hadoop consoles were showing, when I ran the speed layer.
+
 # Challenges
 
 One of the challenges that I faced with this project were the long wait time for cluster resources on various queries. I felt that a lot of my progress was hindered throug this and if I was able to give my past self any advice, it would be to try and run jobs when the cluster is less contested (times like 2 AM, etc). 
