@@ -107,6 +107,10 @@ create_baseball_tables.hql
 batch_layer.hql              
 create_tables_from_thrift.hq
 
+# Code
+
+All the code relating to thrift, kafka, speed layer, scripts for creating hive and updating hbase tables, 
+
 # Run Web App
 Commands to run my web app and speed layer. 
 
