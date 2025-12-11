@@ -1,0 +1,9 @@
+<h2>Games for {{date}}</h2>
+
+<ul>
+    {{#games}}
+        <li>
+            <a href="/game.html?gid={{gid}}">{{away}} @ {{home}} ({{awayRuns}} - {{homeRuns}})</a>
+        </li>
+    {{/games}}
+</ul>

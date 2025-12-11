@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head><title>Play-by-Play</title></head>
+<body>
+<h2>Play-by-Play</h2>
+
+<table border="1" cellpadding="5">
+    <tr>
+        <th>Inning</th>
+        <th>Batter</th>
+        <th>Pitcher</th>
+        <th>Result</th>
+        <th>Source</th>
+    </tr>ls
+    {{#plays}}
+        <tr>
+            <td>{{inning}}</td>
+            <td>{{batter}}</td>
+            <td>{{pitcher}}</td>
+            <td>{{result}}</td>
+            <td>{{source}}</td>
+        </tr>
+    {{/plays}}
+</table>
+
+</body>
+</html>
